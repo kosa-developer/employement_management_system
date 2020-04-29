@@ -1,0 +1,350 @@
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               10.2.14-MariaDB - mariadb.org binary distribution
+-- Server OS:                    Win64
+-- HeidiSQL Version:             9.4.0.5125
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+
+-- Dumping database structure for security_system
+CREATE DATABASE IF NOT EXISTS `security_system` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `security_system`;
+
+-- Dumping structure for table security_system.allowance
+CREATE TABLE IF NOT EXISTS `allowance` (
+  `Allawence_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Time_Submitted` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Date_From` date NOT NULL,
+  `Staff_Id` int(11) DEFAULT NULL,
+  `Registered_By` int(11) NOT NULL,
+  `House` double DEFAULT NULL,
+  `Meal` double DEFAULT NULL,
+  `Medical` double DEFAULT NULL,
+  `Transport` double DEFAULT NULL,
+  PRIMARY KEY (`Allawence_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.asset
+CREATE TABLE IF NOT EXISTS `asset` (
+  `Asset_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Asset_Name` varchar(100) NOT NULL,
+  PRIMARY KEY (`Asset_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.bank
+CREATE TABLE IF NOT EXISTS `bank` (
+  `Bank_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Bank_Name` varchar(100) NOT NULL,
+  PRIMARY KEY (`Bank_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.billing
+CREATE TABLE IF NOT EXISTS `billing` (
+  `Billing_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Customer_Id` int(11) NOT NULL,
+  `Start_Month` text DEFAULT NULL,
+  `No_of_guards` int(11) DEFAULT NULL,
+  `Rate` double DEFAULT NULL,
+  `Period` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Billing_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.branch
+CREATE TABLE IF NOT EXISTS `branch` (
+  `Branch_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Branch_Name` varchar(100) NOT NULL,
+  PRIMARY KEY (`Branch_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.customer
+CREATE TABLE IF NOT EXISTS `customer` (
+  `Customer_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Customer_Names` varchar(100) NOT NULL,
+  `Status` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`Customer_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.daily_rates
+CREATE TABLE IF NOT EXISTS `daily_rates` (
+  `Rate_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Time_Submitted` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Date_From` date NOT NULL,
+  `Staff_Id` int(11) NOT NULL,
+  `Daily_Rate` double DEFAULT NULL,
+  `Overtime_Rate` double DEFAULT NULL,
+  `Registered_By` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Rate_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.expenses
+CREATE TABLE IF NOT EXISTS `expenses` (
+  `Expenses_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Date_Submitted` datetime NOT NULL,
+  `Expense_Type` varchar(45) NOT NULL,
+  `Amount` double NOT NULL,
+  `Description` text DEFAULT NULL,
+  `Added_By` int(11) NOT NULL,
+  `Bank_Reference` varchar(100) DEFAULT NULL,
+  `Status` varchar(45) DEFAULT NULL,
+  `Branch_Id` int(11) DEFAULT NULL,
+  `Bank_Id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Expenses_Id`),
+  KEY `Added_By` (`Added_By`),
+  CONSTRAINT `expenses_ibfk_2` FOREIGN KEY (`Added_By`) REFERENCES `user` (`User_Id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.income
+CREATE TABLE IF NOT EXISTS `income` (
+  `Income_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Item_Id` int(11) NOT NULL,
+  `Received_From` varchar(100) NOT NULL,
+  `Description` text NOT NULL,
+  `Amount` double NOT NULL,
+  `User_Id` int(11) NOT NULL,
+  `Date_Time` datetime NOT NULL,
+  PRIMARY KEY (`Income_Id`),
+  KEY `Item_Id` (`Item_Id`,`User_Id`),
+  KEY `User_Id` (`User_Id`),
+  CONSTRAINT `income_ibfk_1` FOREIGN KEY (`Item_Id`) REFERENCES `source_items` (`Item_Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `income_ibfk_2` FOREIGN KEY (`User_Id`) REFERENCES `user` (`User_Id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.invoicing
+CREATE TABLE IF NOT EXISTS `invoicing` (
+  `Invoice_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Billing_Id` int(11) DEFAULT NULL,
+  `Period` text DEFAULT NULL,
+  `Working_Days` text DEFAULT NULL,
+  `Rate` double DEFAULT NULL,
+  `Amount_Perdays` text DEFAULT NULL,
+  `Total_Amount` double DEFAULT NULL,
+  PRIMARY KEY (`Invoice_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.loan
+CREATE TABLE IF NOT EXISTS `loan` (
+  `Loan_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Time_Submitted` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Loan_Date` date NOT NULL,
+  `Staff_Id` int(11) NOT NULL,
+  `Loan_Type` varchar(45) NOT NULL,
+  `Amount_Paid` double NOT NULL,
+  `Registered_By` int(11) NOT NULL,
+  PRIMARY KEY (`Loan_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.person
+CREATE TABLE IF NOT EXISTS `person` (
+  `Person_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Person_Number` varchar(45) DEFAULT NULL,
+  `Department` varchar(45) DEFAULT NULL,
+  `Identity_Card` varchar(100) DEFAULT NULL,
+  `Country_Of_Origin` varchar(100) NOT NULL,
+  `Fname` varchar(100) DEFAULT NULL,
+  `Lname` varchar(45) DEFAULT NULL,
+  `DOB` date DEFAULT NULL,
+  `Gender` varchar(10) DEFAULT NULL,
+  `Phone_Number` varchar(100) DEFAULT NULL,
+  `Residence` varchar(100) DEFAULT NULL,
+  `Village` varchar(45) DEFAULT NULL,
+  `Subcounty` varchar(45) DEFAULT NULL,
+  `District` varchar(45) DEFAULT NULL,
+  `Education` text DEFAULT NULL,
+  `Occupation` text DEFAULT NULL,
+  `Religion` varchar(100) DEFAULT NULL,
+  `Employer` varchar(45) NOT NULL,
+  PRIMARY KEY (`Person_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.position
+CREATE TABLE IF NOT EXISTS `position` (
+  `Position_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Position_Name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Position_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.service
+CREATE TABLE IF NOT EXISTS `service` (
+  `Service_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Service_Name` varchar(100) NOT NULL,
+  `Service_Type` varchar(45) NOT NULL,
+  `Price` varchar(100) NOT NULL,
+  PRIMARY KEY (`Service_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.signatories
+CREATE TABLE IF NOT EXISTS `signatories` (
+  `Signatory_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Staff_Id` int(11) NOT NULL,
+  `Role` varchar(45) NOT NULL,
+  PRIMARY KEY (`Signatory_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.source_items
+CREATE TABLE IF NOT EXISTS `source_items` (
+  `Item_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Item_Type` varchar(45) NOT NULL,
+  `Item_Name` varchar(45) NOT NULL,
+  `Item_Status` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`Item_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.staff
+CREATE TABLE IF NOT EXISTS `staff` (
+  `Staff_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Enrollment_Date` date NOT NULL,
+  `Title` varchar(45) DEFAULT NULL,
+  `Rank` varchar(100) DEFAULT NULL,
+  `Serial_Number` varchar(100) DEFAULT NULL,
+  `Service_Number` varchar(100) DEFAULT NULL,
+  `Parent_Name` varchar(200) DEFAULT NULL,
+  `Parent_contact` varchar(200) DEFAULT NULL,
+  `Photo` varchar(100) DEFAULT NULL,
+  `Education_Background` text DEFAULT NULL,
+  `Experience` text DEFAULT NULL,
+  `Accomplishment` text DEFAULT NULL,
+  `Email` varchar(45) DEFAULT NULL,
+  `Position` varchar(45) NOT NULL,
+  `Staff_Department` varchar(45) NOT NULL,
+  `Person_Id` int(11) NOT NULL,
+  `Is_Approved` int(11) NOT NULL DEFAULT 1,
+  `Staff_Status` int(11) NOT NULL DEFAULT 1,
+  `Bank_Id` int(11) DEFAULT NULL,
+  `Account_Number` varchar(45) DEFAULT NULL,
+  `Branch` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Staff_Id`),
+  KEY `fk_staff_position_idx` (`Position`),
+  KEY `fk_staff_department1_idx` (`Staff_Department`),
+  KEY `fk_staff_person1_idx` (`Person_Id`),
+  CONSTRAINT `fk_staff_person1` FOREIGN KEY (`Person_Id`) REFERENCES `person` (`Person_Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.staff_attendance
+CREATE TABLE IF NOT EXISTS `staff_attendance` (
+  `Attendance_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Date` date NOT NULL,
+  `Staff_Id` int(11) NOT NULL,
+  `Registered_By` int(11) DEFAULT NULL,
+  `Is_Present` int(11) NOT NULL,
+  PRIMARY KEY (`Attendance_Id`),
+  KEY `Registered_By` (`Registered_By`),
+  KEY `Staff_Id` (`Staff_Id`),
+  CONSTRAINT `staff_attendance_ibfk_1` FOREIGN KEY (`Staff_Id`) REFERENCES `staff` (`Staff_Id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=412 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.staff_overtime_attendency
+CREATE TABLE IF NOT EXISTS `staff_overtime_attendency` (
+  `Attendance_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Date` date NOT NULL,
+  `Staff_Id` int(11) NOT NULL,
+  `Registered_By` int(11) NOT NULL,
+  `Is_Present` int(11) NOT NULL,
+  PRIMARY KEY (`Attendance_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.staff_payments
+CREATE TABLE IF NOT EXISTS `staff_payments` (
+  `Payment_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Time_Submitted` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Payment_Date` date NOT NULL,
+  `Staff_Id` int(11) NOT NULL,
+  `Payment_Type` varchar(45) NOT NULL DEFAULT 'Salary',
+  `Amount_Paid` double NOT NULL,
+  `Registered_By` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Payment_Id`),
+  KEY `Registered_By` (`Registered_By`),
+  KEY `Staff_Id` (`Staff_Id`),
+  CONSTRAINT `staff_payments_ibfk_1` FOREIGN KEY (`Staff_Id`) REFERENCES `staff` (`Staff_Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `staff_payments_ibfk_2` FOREIGN KEY (`Registered_By`) REFERENCES `user` (`User_Id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.staff_salary_scale
+CREATE TABLE IF NOT EXISTS `staff_salary_scale` (
+  `Salary_Scale_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Time_Submitted` timestamp NOT NULL DEFAULT current_timestamp(),
+  `Date_From` date NOT NULL,
+  `Staff_Id` int(11) NOT NULL,
+  `Salary_Scale` double DEFAULT NULL,
+  `Registered_By` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Salary_Scale_Id`),
+  KEY `Registered_By` (`Registered_By`),
+  KEY `Staff_Id` (`Staff_Id`),
+  CONSTRAINT `staff_salary_scale_ibfk_1` FOREIGN KEY (`Staff_Id`) REFERENCES `staff` (`Staff_Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `staff_salary_scale_ibfk_2` FOREIGN KEY (`Registered_By`) REFERENCES `user` (`User_Id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.stock_assets
+CREATE TABLE IF NOT EXISTS `stock_assets` (
+  `Stock_Asset_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Asset_Id` int(11) NOT NULL,
+  `Description` text NOT NULL,
+  `Total_Number` int(11) NOT NULL,
+  `Serial_Number` varchar(100) DEFAULT NULL,
+  `Unit_Price` varchar(100) DEFAULT NULL,
+  `Date_Received` date NOT NULL,
+  `Depreciation_Rate` varchar(45) NOT NULL,
+  PRIMARY KEY (`Stock_Asset_Id`),
+  KEY `Asset_Id` (`Asset_Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.tax_settings
+CREATE TABLE IF NOT EXISTS `tax_settings` (
+  `tax_settings_id` int(11) NOT NULL AUTO_INCREMENT,
+  `range_from` double NOT NULL,
+  `range_to` double NOT NULL,
+  `date` datetime NOT NULL,
+  `rates` int(11) DEFAULT NULL,
+  `Amount` double DEFAULT NULL,
+  `tax_type` varchar(100) NOT NULL,
+  `paying_period_from` datetime DEFAULT NULL,
+  `paying_period_to` datetime DEFAULT NULL,
+  PRIMARY KEY (`tax_settings_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+-- Dumping structure for table security_system.user
+CREATE TABLE IF NOT EXISTS `user` (
+  `User_Id` int(11) NOT NULL AUTO_INCREMENT,
+  `Username` varchar(45) DEFAULT NULL,
+  `Password` varchar(45) DEFAULT NULL,
+  `Recovery_Option` varchar(100) NOT NULL,
+  `User_Role` varchar(45) DEFAULT NULL,
+  `Modules_Accessed` text NOT NULL,
+  `Status` int(11) DEFAULT 1,
+  `Staff_Id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`User_Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
